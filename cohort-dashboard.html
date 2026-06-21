@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIBF · Founding Cohort Applications</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --shell:      #E5DED2;
+  --shell-dark: #DAD2C3;
+  --ink:        #161513;
+  --ink-soft:   #3a3733;
+  --paper:      #FBFAF7;
+  --border:     1.5px solid #161513;
+}
+
+body {
+  font-family: 'Archivo', -apple-system, sans-serif;
+  background: var(--shell);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Nav ── */
+nav {
+  background: var(--shell);
+  border-bottom: var(--border);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.lockup { display: flex; align-items: center; gap: 12px; }
+.wordmark { display: flex; flex-direction: column; line-height: 0.9; }
+.wordmark .ai  { font-weight: 400; font-size: 0.72rem; letter-spacing: 3px; margin-bottom: 3px; font-family: 'Space Mono', monospace; text-transform: uppercase; }
+.wordmark .biz { font-weight: 800; font-size: 0.96rem; letter-spacing: 0.2px; text-transform: uppercase; }
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.meta { font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 1px; color: var(--ink-soft); }
+.refresh-btn {
+  font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 8px 16px; background: transparent;
+  border: var(--border); color: var(--ink); cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.refresh-btn:hover { background: var(--ink); color: var(--shell); }
+
+/* ── Page ── */
+.page { max-width: 1360px; margin: 0 auto; padding: 0 40px; }
+
+/* ── Section ── */
+.section { padding: 40px 0; border-bottom: var(--border); }
+.section-label {
+  font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 20px;
+}
+
+/* ── Stats ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  border-top: var(--border);
+  border-left: var(--border);
+  border-right: var(--border);
+}
+.stat-card {
+  border-right: var(--border);
+  border-bottom: var(--border);
+  padding: 20px 18px;
+}
+.stat-card:last-child { border-right: none; }
+.stat-card .num {
+  font-size: 2.4rem; font-weight: 900; line-height: 1; color: var(--ink);
+}
+.stat-card .label {
+  font-family: 'Space Mono', monospace; font-size: 0.58rem;
+  letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-soft); margin-top: 6px;
+}
+.stat-card.total .num { font-size: 2.8rem; }
+
+/* ── Charts ── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-top: var(--border);
+  border-left: var(--border);
+  gap: 0;
+}
+.chart-card {
+  border-right: var(--border);
+  border-bottom: var(--border);
+  padding: 28px;
+}
+.chart-title {
+  font-family: 'Space Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 20px;
+}
+.chart-wrap { height: 200px; position: relative; }
+
+/* ── Word Cloud ── */
+.wordcloud-section { padding: 40px 0; border-bottom: var(--border); }
+.wordcloud-inner {
+  background: var(--ink);
+  padding: 48px 40px;
+}
+.wordcloud-heading {
+  font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--shell-dark); margin-bottom: 32px;
+}
+#wordcloud {
+  position: relative;
+  min-height: 220px;
+  width: 100%;
+}
+.wc-word {
+  position: absolute;
+  color: var(--shell);
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  line-height: 1.15;
+  cursor: default;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.wc-word:hover { opacity: 1 !important; }
+.wc-empty {
+  font-family: 'Space Mono', monospace; font-size: 0.75rem;
+  color: var(--shell-dark); letter-spacing: 1px;
+}
+
+/* ── Table ── */
+.table-section { padding: 40px 0; }
+.table-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+}
+.table-actions { display: flex; align-items: center; gap: 16px; }
+.search-input {
+  font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 0.5px;
+  padding: 8px 14px; background: transparent; border: var(--border);
+  color: var(--ink); width: 200px; outline: none;
+}
+.search-input::placeholder { color: var(--ink-soft); }
+.search-input:focus { background: var(--paper); }
+.sheet-link {
+  font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink-soft);
+}
+.sheet-link:hover { border-bottom-color: var(--ink); }
+
+.table-wrap { overflow-x: auto; border: var(--border); }
+table { width: 100%; border-collapse: collapse; min-width: 800px; }
+thead { background: var(--ink); }
+th {
+  text-align: left; font-family: 'Space Mono', monospace; font-size: 0.58rem;
+  font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--shell); padding: 12px 16px; white-space: nowrap; cursor: pointer;
+  user-select: none; border-right: 1px solid var(--ink-soft);
+}
+th:last-child { border-right: none; }
+th:hover { color: var(--shell-dark); }
+td {
+  padding: 12px 16px; border-bottom: 1px solid var(--shell-dark);
+  border-right: 1px solid var(--shell-dark); vertical-align: middle;
+}
+td:last-child { border-right: none; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--paper); }
+
+.name-primary { font-weight: 700; font-size: 13px; color: var(--ink); }
+.name-sub { font-family: 'Space Mono', monospace; font-size: 0.62rem; color: var(--ink-soft); margin-top: 3px; letter-spacing: 0.3px; }
+.msg-cell { font-size: 12px; color: var(--ink-soft); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Stage badges */
+.badge {
+  font-family: 'Space Mono', monospace; font-size: 0.58rem; letter-spacing: 1px;
+  text-transform: uppercase; padding: 4px 8px; display: inline-block; white-space: nowrap;
+  border: 1px solid;
+}
+.badge-new          { border-color: var(--ink); color: var(--ink); background: transparent; }
+.badge-reviewed     { border-color: var(--ink-soft); color: var(--ink-soft); background: var(--shell-dark); }
+.badge-invited      { border-color: var(--ink); color: var(--shell); background: var(--ink-soft); }
+.badge-call_booked  { border-color: var(--ink); color: var(--shell); background: var(--ink); }
+.badge-call_done    { border-color: var(--ink); color: var(--shell); background: var(--ink); font-weight: 700; }
+.badge-joined_slack    { border-color: var(--ink); color: var(--shell); background: var(--ink); font-weight: 700; }
+.badge-fully_onboarded { border-color: var(--ink); color: var(--shell); background: var(--ink); font-weight: 700; letter-spacing: 1.5px; }
+.badge-rejected        { border-color: var(--shell-dark); color: var(--ink-soft); background: transparent; text-decoration: line-through; }
+
+/* ── Loading / error ── */
+.loading-state {
+  text-align: center; padding: 80px 40px;
+  font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.spinner {
+  width: 28px; height: 28px; border: 2px solid var(--shell-dark);
+  border-top-color: var(--ink); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-state { text-align: center; padding: 60px; color: var(--ink); font-size: 13px; }
+.empty-row td { text-align: center; color: var(--ink-soft); padding: 32px; font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 1px; }
+
+@media (max-width: 1100px) {
+  .stats-grid { grid-template-columns: repeat(5, 1fr); }
+}
+@media (max-width: 900px) {
+  .charts-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+  nav, .page { padding-left: 20px; padding-right: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="lockup">
+    <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="4" fill="#161513"/><circle cx="50" cy="42" r="3.5" fill="#161513"/><circle cx="50" cy="58" r="3.5" fill="#161513"/><circle cx="42" cy="50" r="3.5" fill="#161513"/><circle cx="58" cy="50" r="3.5" fill="#161513"/><circle cx="44" cy="44" r="1.8" fill="#161513"/><circle cx="56" cy="44" r="1.8" fill="#161513"/><circle cx="44" cy="56" r="1.8" fill="#161513"/><circle cx="56" cy="56" r="1.8" fill="#161513"/><circle cx="50" cy="32" r="3" fill="#161513"/><circle cx="50" cy="22" r="2.2" fill="#161513"/><circle cx="50" cy="13" r="1.4" fill="#161513"/><circle cx="50" cy="68" r="3" fill="#161513"/><circle cx="50" cy="78" r="2.2" fill="#161513"/><circle cx="50" cy="87" r="1.4" fill="#161513"/><circle cx="32" cy="50" r="3" fill="#161513"/><circle cx="22" cy="50" r="2.2" fill="#161513"/><circle cx="13" cy="50" r="1.4" fill="#161513"/><circle cx="68" cy="50" r="3" fill="#161513"/><circle cx="78" cy="50" r="2.2" fill="#161513"/><circle cx="87" cy="50" r="1.4" fill="#161513"/>
+    </svg>
+    <div class="wordmark">
+      <span class="ai">AI</span>
+      <span class="biz">Business</span>
+      <span class="biz">Forum</span>
+    </div>
+    <span style="font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--ink-soft);margin-left:8px;padding-left:16px;border-left:1px solid var(--shell-dark);">Founding Cohort</span>
+  </div>
+  <div class="nav-right">
+    <span class="meta" id="meta">Loading…</span>
+    <button class="refresh-btn" onclick="init()">Refresh</button>
+  </div>
+</nav>
+
+<!-- Loading -->
+<div id="loading" class="loading-state">
+  <div class="spinner"></div>
+  Fetching applications…
+</div>
+
+<!-- Dashboard -->
+<div id="main" style="display:none">
+
+  <!-- Stats -->
+  <div class="page">
+    <div class="section">
+      <div class="section-label">Pipeline overview</div>
+      <div class="stats-grid" id="stats"></div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="page">
+    <div class="section">
+      <div class="section-label">Breakdown</div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">Pipeline stage</div>
+          <div class="chart-wrap"><canvas id="pipelineChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">By industry</div>
+          <div class="chart-wrap"><canvas id="industryChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Company size</div>
+          <div class="chart-wrap"><canvas id="sizeChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Word Cloud -->
+  <div class="page">
+    <div class="wordcloud-section">
+      <div class="section-label">Job titles</div>
+      <div class="wordcloud-inner">
+        <div class="wordcloud-heading">Applicant roles — size reflects frequency</div>
+        <div id="wordcloud"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="page">
+    <div class="table-section">
+      <div class="table-header">
+        <div class="section-label" style="margin-bottom:0">All applicants</div>
+        <div class="table-actions">
+          <input class="search-input" type="text" id="search" placeholder="Search…" oninput="renderTable()">
+          <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1VkUvayogDx4g-FvsnbVBIzgyDdTd4brMsillK-SL7Qc/edit" target="_blank">Edit in Sheets ↗</a>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortBy('Name')">Name <span id="sort-Name">↕</span></th>
+              <th onclick="sortBy('Company')">Company <span id="sort-Company">↕</span></th>
+              <th onclick="sortBy('Industry')">Industry <span id="sort-Industry">↕</span></th>
+              <th>Size</th>
+              <th>What they're working on</th>
+              <th onclick="sortBy('Applied')">Applied <span id="sort-Applied">↓</span></th>
+              <th onclick="sortBy('Pipeline Stage')">Stage <span id="sort-Pipeline Stage">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="error" style="display:none" class="error-state"></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytvG5lb5_3gFn7EPPKsxE9bDJWsZOO0MNcumy4qc76kYf4jR1levNoa3tbrRXsmDVE4Q/exec';
+const STAGES = ['New','Reviewed','Invited','Call Booked','Call Done','Joined Slack','Fully Onboarded','Rejected'];
+const INK_SHADES = ['#161513','#3a3733','#5c5753','#7d7975','#9e9b97','#bfbcb9','#dedad6','#f0ede8'];
+
+let allApplicants = [];
+let sortCol = 'Applied';
+let sortAsc = false;
+let charts = {};
+
+function badgeClass(s) {
+  const map = { 'New':'new','Reviewed':'reviewed','Invited':'invited','Call Booked':'call_booked','Call Done':'call_done','Joined Slack':'joined_slack','Fully Onboarded':'fully_onboarded','Rejected':'rejected' };
+  return 'badge badge-' + (map[s] || 'new');
+}
+
+function sizeBucket(s) {
+  const n = parseInt((s||'').replace(/\D/g,''), 10);
+  if (isNaN(n)) return 'Unknown';
+  if (n <= 50) return '1–50';
+  if (n <= 250) return '51–250';
+  if (n <= 1000) return '251–1,000';
+  if (n <= 5000) return '1,001–5,000';
+  return '5,000+';
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderStats() {
+  const counts = {};
+  STAGES.forEach(s => counts[s] = 0);
+  allApplicants.forEach(a => { const s = a['Pipeline Stage']||'New'; counts[s]=(counts[s]||0)+1; });
+  const el = document.getElementById('stats');
+  el.innerHTML =
+    `<div class="stat-card total"><div class="num">${allApplicants.length}</div><div class="label">Total</div></div>` +
+    STAGES.map(s => `<div class="stat-card"><div class="num">${counts[s]}</div><div class="label">${s}</div></div>`).join('');
+}
+
+function renderCharts() {
+  Object.values(charts).forEach(c => c.destroy());
+  charts = {};
+
+  const chartDefaults = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  };
+
+  // Pipeline
+  const stageCounts = STAGES.map(s => allApplicants.filter(a => (a['Pipeline Stage']||'New') === s).length);
+  charts.pipeline = new Chart(document.getElementById('pipelineChart'), {
+    type: 'bar',
+    data: {
+      labels: STAGES,
+      datasets: [{ data: stageCounts, backgroundColor: '#161513', borderRadius: 0 }]
+    },
+    options: { ...chartDefaults,
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: "'Space Mono'", size: 9 }, color: '#3a3733' } },
+        y: { grid: { color: '#DAD2C3' }, ticks: { stepSize: 1, font: { family: "'Space Mono'", size: 9 }, color: '#3a3733' } }
+      }
+    }
+  });
+
+  // Industry
+  const indCounts = {};
+  allApplicants.forEach(a => { const k = a['Industry']||'Unknown'; indCounts[k]=(indCounts[k]||0)+1; });
+  const indLabels = Object.keys(indCounts).sort((a,b) => indCounts[b]-indCounts[a]);
+  charts.industry = new Chart(document.getElementById('industryChart'), {
+    type: 'bar',
+    data: {
+      labels: indLabels,
+      datasets: [{ data: indLabels.map(l => indCounts[l]), backgroundColor: INK_SHADES, borderRadius: 0 }]
+    },
+    options: { ...chartDefaults,
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: "'Space Mono'", size: 9 }, color: '#3a3733' } },
+        y: { grid: { color: '#DAD2C3' }, ticks: { stepSize: 1, font: { family: "'Space Mono'", size: 9 }, color: '#3a3733' } }
+      }
+    }
+  });
+
+  // Size
+  const ORDER = ['1–50','51–250','251–1,000','1,001–5,000','5,000+','Unknown'];
+  const sizeCounts = {};
+  allApplicants.forEach(a => { const k = sizeBucket(a['Company Size']); sizeCounts[k]=(sizeCounts[k]||0)+1; });
+  const sizeLabels = ORDER.filter(l => sizeCounts[l]);
+  charts.size = new Chart(document.getElementById('sizeChart'), {
+    type: 'doughnut',
+    data: {
+      labels: sizeLabels,
+      datasets: [{ data: sizeLabels.map(l => sizeCounts[l]), backgroundColor: INK_SHADES, borderWidth: 2, borderColor: '#E5DED2' }]
+    },
+    options: { ...chartDefaults,
+      plugins: { legend: { display: true, position: 'right', labels: { font: { family: "'Space Mono'", size: 9 }, color: '#3a3733', boxWidth: 10, padding: 10 } } }
+    }
+  });
+}
+
+function renderWordCloud() {
+  const titleCounts = {};
+  allApplicants.forEach(a => {
+    const t = (a['Job Title']||'').trim();
+    if (t) titleCounts[t] = (titleCounts[t]||0)+1;
+  });
+  const words = Object.entries(titleCounts).sort((a,b) => b[1]-a[1]);
+  const el = document.getElementById('wordcloud');
+  el.innerHTML = '';
+
+  if (words.length === 0) {
+    el.style.position = 'relative';
+    el.innerHTML = '<span class="wc-empty" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">No job titles yet</span>';
+    return;
+  }
+
+  const max = words[0][1];
+  const min = words[words.length-1][1];
+  const range = max - min || 1;
+
+  // Build spans off-screen first to measure
+  const spans = words.map(([word, count]) => {
+    const t = (count - min) / range;
+    const size = Math.round(14 + t * 44);
+    const weight = size >= 40 ? 900 : size >= 28 ? 800 : size >= 20 ? 700 : 400;
+    const opacity = (0.45 + t * 0.55).toFixed(2);
+    const span = document.createElement('span');
+    span.className = 'wc-word';
+    span.textContent = word;
+    span.title = `${count} application${count>1?'s':''}`;
+    span.style.cssText = `font-size:${size}px;font-weight:${weight};opacity:${opacity};visibility:hidden;left:0;top:0`;
+    el.appendChild(span);
+    return { span, size };
+  });
+
+  // Measure container width
+  const W = el.offsetWidth || 800;
+  const PAD = 12; // padding from edges
+  const placed = [];
+
+  function overlaps(r) {
+    for (const p of placed) {
+      if (r.x < p.x + p.w + PAD && r.x + r.w + PAD > p.x &&
+          r.y < p.y + p.h + PAD && r.y + r.h + PAD > p.y) return true;
+    }
+    return false;
+  }
+
+  // Simple seeded pseudo-random for consistent layout
+  let seed = 42;
+  function rand() { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 4294967296; }
+
+  let maxBottom = 0;
+
+  for (const { span } of spans) {
+    const sw = span.offsetWidth;
+    const sh = span.offsetHeight;
+    let placed_flag = false;
+
+    for (let attempt = 0; attempt < 200; attempt++) {
+      const x = PAD + rand() * Math.max(0, W - sw - PAD * 2);
+      const y = PAD + rand() * 180;
+      const r = { x, y, w: sw, h: sh };
+      if (!overlaps(r)) {
+        span.style.left = x + 'px';
+        span.style.top  = y + 'px';
+        span.style.visibility = 'visible';
+        placed.push(r);
+        if (y + sh > maxBottom) maxBottom = y + sh;
+        placed_flag = true;
+        break;
+      }
+    }
+    // fallback: stack at bottom if no space found
+    if (!placed_flag) {
+      span.style.left = PAD + 'px';
+      span.style.top  = (maxBottom + PAD) + 'px';
+      span.style.visibility = 'visible';
+      placed.push({ x: PAD, y: maxBottom + PAD, w: sw, h: sh });
+      maxBottom += sh + PAD;
+    }
+  }
+
+  el.style.minHeight = (maxBottom + PAD * 2) + 'px';
+}
+
+function renderTable() {
+  const q = (document.getElementById('search').value||'').toLowerCase();
+  let rows = allApplicants.filter(a =>
+    !q || ['Name','Job Title','Company','Industry','Message'].some(k => (a[k]||'').toLowerCase().includes(q))
+  );
+  rows.sort((a,b) => {
+    const va = (a[sortCol]||'').toString();
+    const vb = (b[sortCol]||'').toString();
+    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+
+  document.querySelectorAll('th span').forEach(el => el.textContent = '↕');
+  const icon = document.getElementById('sort-' + sortCol);
+  if (icon) icon.textContent = sortAsc ? '↑' : '↓';
+
+  const tbody = document.getElementById('tbody');
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No applicants found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(a => `
+    <tr>
+      <td>
+        <div class="name-primary">${esc(a['Name'])}</div>
+        <div class="name-sub">${esc(a['Job Title']||'')}${a['Job Title']&&a['Email']?' · ':''}${esc(a['Email']||'')}</div>
+      </td>
+      <td>${esc(a['Company']||'—')}</td>
+      <td>${esc(a['Industry']||'—')}</td>
+      <td style="white-space:nowrap;font-family:'Space Mono',monospace;font-size:11px;">${esc(a['Company Size']||'—')}</td>
+      <td><div class="msg-cell" title="${esc(a['Message'])}">${esc(a['Message']||'—')}</div></td>
+      <td style="white-space:nowrap;font-family:'Space Mono',monospace;font-size:11px;">${fmtDate(a['Applied'])}</td>
+      <td><span class="${badgeClass(a['Pipeline Stage']||'New')}">${esc(a['Pipeline Stage']||'New')}</span></td>
+    </tr>`).join('');
+}
+
+function sortBy(col) {
+  sortAsc = sortCol === col ? !sortAsc : true;
+  sortCol = col;
+  renderTable();
+}
+
+async function init() {
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('meta').textContent = 'Loading…';
+
+  try {
+    const res = await fetch(SCRIPT_URL, { redirect: 'follow' });
+    const json = await res.json();
+    if (json.status !== 'ok') throw new Error(json.message || 'Script error');
+
+    allApplicants = (json.data||[]).sort((a,b) => new Date(b['Applied']) - new Date(a['Applied']));
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    document.getElementById('meta').textContent =
+      `${allApplicants.length} application${allApplicants.length!==1?'s':''} · ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
+
+    renderStats();
+    renderCharts();
+    renderWordCloud();
+    renderTable();
+  } catch(err) {
+    document.getElementById('loading').style.display = 'none';
+    const el = document.getElementById('error');
+    el.style.display = 'block';
+    el.textContent = 'Could not load data: ' + err.message;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
